@@ -5,6 +5,11 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from './inputs/input'; 
 import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
+
 
 function Login() {
 
@@ -38,13 +43,41 @@ function Login() {
       if (response.ok && credentials.token) {
         login(credentials.token);
         navigate('/home');
+        toast.success("login successful.");
       } else {
-        alert(data.error || "Login failed.");
+        toast.error(credentials.error);
       }
     } catch (error) {
       console.error("Login error:", error);
     }
   };
+
+   const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      const { credential } = credentialResponse;
+      
+      const response = await axios.post('http://localhost:5000/google-login', {
+        token: credential,
+      });
+      
+      const { token } = response.data;
+      if (token) {
+        login(token);
+        navigate('/home'); 
+        toast.success("login successful.");
+      } else {
+        toast.error("Google login failed.");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("An error occurred with Google login.");
+    }
+  };
+
+  const handleGoogleLoginFailure = () => {
+    toast.error("Google login was unsuccessful. Please try again.");
+  };
+
 
   return (
     <div className="max-w-md mx-auto mt-10">
@@ -55,7 +88,7 @@ function Login() {
           name="email"
           register={register}
           control={control}
-          validation={{ required: 'email is required' }}
+          validation={{ required: 'email is required' , pattern: {value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'invalid email address'}}}
           error={errors.email}
         />
         <Input
@@ -79,6 +112,13 @@ function Login() {
         <Link to="/signup" className="text-md hover:underline">
           I don't have an account
         </Link>
+      </div>
+
+      <div className="mt-4 w-full">
+        <GoogleLogin
+          onSuccess={handleGoogleLoginSuccess}
+          onError={handleGoogleLoginFailure}
+        />
       </div>
     </div>
   );
