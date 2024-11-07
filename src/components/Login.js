@@ -40,6 +40,7 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
       const credentials = await response.json();
+      
       if (response.ok && credentials.token) {
         login(credentials.token);
         navigate('/home');
@@ -59,7 +60,7 @@ function Login() {
       const response = await axios.post('http://localhost:5000/google-login', {
         token: credential,
       });
-      
+       
       const { token } = response.data;
       if (token) {
         login(token);
