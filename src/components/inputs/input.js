@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Input = ({ label, type, name, register, validation, error }) => {
+const Input = ({ label, type, name, register, validation, error, className }) => {
   return (
     <div className="mb-4">
       <label className="block mb-2 text-sm font-medium">{label}</label>
       <input
-        className="border border-gray-300 p-2 w-full rounded"
+        className={`border border-gray-300 p-2 w-full rounded ${className || ""}`}
         type={type}
         name={name}
         {...register(name, validation)} 

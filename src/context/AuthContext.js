@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 // Create the Auth context
 export const AuthContext = createContext();
@@ -7,6 +8,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -17,7 +19,6 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Invalid token", error);
-        logout(); 
       }
     }
   }, []);
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token"); 
     setUser(null);
     setIsAuthenticated(false);
+    navigate("/login");
   };
 
 
