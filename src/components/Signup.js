@@ -1,9 +1,12 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Input from './inputs/input'; 
+import { toast } from 'react-toastify';
 
  function Signup() {
+
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -22,9 +25,10 @@ import Input from './inputs/input';
       });
       const responseData = await response.json();
       if (response.ok) {
-        alert("Signup successful! Please log in.");
+        toast.success("Signup successful. Please login.");
+        navigate('/login');
       } else {
-        alert(responseData.error || "Error signing up.");
+        toast.error(responseData.message);
       }
     } catch (error) {
       console.error("Signup error:", error);

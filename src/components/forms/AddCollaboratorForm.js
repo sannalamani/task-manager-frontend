@@ -1,10 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import Input from "../inputs/input";
-import Textarea from "../inputs/textArea";
 import { toast } from "react-toastify";
 
-const CreateProjectForm = () => {
+const AddCollaboratorForm = ({project}) => {
 
     const {
         register,
@@ -14,11 +13,12 @@ const CreateProjectForm = () => {
       } = useForm();
 
         const onSubmit = async (data) => {
+          data.id = project._id;
           try {
             const response = await fetch(
-              "http://localhost:5000/project/create-project",
+              "http://localhost:5000/project/update-project",
               {
-                method: "POST",
+                method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
                   "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -27,7 +27,7 @@ const CreateProjectForm = () => {
               }
             );
             if (response.ok) {
-              toast.success("Project created successfully!");
+              toast.success("Proj!");
             }
             if (response.status === 401) {
               toast.error("Unauthorized");
@@ -36,6 +36,7 @@ const CreateProjectForm = () => {
 
           } catch (error) {
             console.error("Create project error:", error);
+            toast.error("Server error");
           }
         };
 
@@ -44,30 +45,7 @@ const CreateProjectForm = () => {
       <div className="max-w-md mx-auto mt-10">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
-            label="Name"
-            type="text"
-            name="name"
-            register={register}
-            control={control}
-            validation={{
-              required: "name is required"
-            }}
-            error={errors.name}
-          />
 
-          <Textarea
-            label="Description (optional)"
-            type="text"
-            name="description"
-            className={"h-24"}
-            register={register}
-            control={control}
-            validation={{}}
-            error={errors.description}
-          />
-
-          <Input
-            label="Members (optional)"
             type="email"
             name="members"
             register={register}
@@ -83,13 +61,13 @@ const CreateProjectForm = () => {
 
           <button
             type="submit"
-            className="bg-slate-900 text-white py-2 px-4 rounded mt-4 w-full"
+            className="bg-slate-900 text-white py-2 px-4 rounded-full mt-1 w-full"
           >
-            Create Project
+            add
           </button>
         </form>
       </div>
     );
     };
 
-export default CreateProjectForm;
+export default AddCollaboratorForm;
